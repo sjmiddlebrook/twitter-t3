@@ -35,7 +35,7 @@ export function SideNav() {
               onClick={() => void signOut()}
             >
               <LogOut size={24} />
-              <span className="hidden md:inline">Sign out</span>
+              <span className="hidden md:inline md:whitespace-nowrap">Sign out</span>
             </button>
           </li>
         ) : (

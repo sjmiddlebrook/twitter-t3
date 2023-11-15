@@ -7,10 +7,36 @@ import { api } from '@/utils/api';
 export function NewTweet() {
   const [content, setContent] = useState('');
   const session = useSession();
+  const trpcUtils = api.useUtils();
   const createTweet = api.tweet.create.useMutation({
     onSuccess: (newTweet) => {
-      console.log(newTweet);
       setContent('');
+
+      trpcUtils.tweet.infiniteFeed.setInfiniteData({}, (oldData) => {
+        if (!oldData?.pages?.[0]) return;
+        const user = session.data?.user;
+        if (!user) return;
+        const newCacheTweet = {
+          ...newTweet,
+          likeCount: 0,
+          isLiked: false,
+          user: {
+            id: user.id,
+            name: user.name ?? null,
+            image: user.image ?? null,
+          },
+        };
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              tweets: [newCacheTweet, ...oldData.pages[0].tweets],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      });
     },
   });
 
