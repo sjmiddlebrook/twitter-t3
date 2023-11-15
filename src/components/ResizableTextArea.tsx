@@ -38,6 +38,10 @@ const ResizableTextArea: React.FC<ResizableTextAreaProps> = ({
   }, [resizeTextArea]);
 
   useEffect(() => {
+    setText(value);
+  }, [value]);
+
+  useEffect(() => {
     resizeTextArea();
   }, [text, resizeTextArea]);
 

@@ -9,6 +9,7 @@ import { api } from "@/utils/api";
 
 import "@/styles/globals.css";
 import { SideNav } from "@/components/SideNav";
+import DiscoverSidebar from "@/components/DiscoverSidebar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -23,9 +24,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <div className={`container mx-auto flex items-start ${GeistSans.className}`}>
         <SideNav />
-        <div className="min-h-screen flex-grow border-x">
+        <div className="min-h-screen flex-grow border-x max-w-2xl">
           <Component {...pageProps} />
         </div>
+        <DiscoverSidebar />
       </div>
     </SessionProvider>
   );

@@ -1,14 +1,31 @@
-import { useSession } from "next-auth/react";
-import { ProfileImage } from "./ProfileImage";
-import { useState } from "react";
-import ResizableTextArea from "./ResizableTextArea";
+import { useSession } from 'next-auth/react';
+import { ProfileImage } from './ProfileImage';
+import { useState } from 'react';
+import ResizableTextArea from './ResizableTextArea';
+import { api } from '@/utils/api';
 
 export function NewTweet() {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const session = useSession();
-  if (session.status !== "authenticated") return null;
+  const createTweet = api.tweet.create.useMutation({
+    onSuccess: (newTweet) => {
+      console.log(newTweet);
+      setContent('');
+    },
+  });
+
+  if (session.status !== 'authenticated') return null;
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    createTweet.mutate({ content });
+  }
+
   return (
-    <form className="flex space-x-4 border-b border-gray-200 px-4 py-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex space-x-4 border-b border-gray-200 px-4 py-4"
+    >
       <ProfileImage className="shrink-0" src={session.data.user.image} />
       <div className="flex flex-grow flex-col">
         <ResizableTextArea
