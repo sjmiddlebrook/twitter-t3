@@ -24,7 +24,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <div className={`container mx-auto flex items-start ${GeistSans.className}`}>
         <SideNav />
-        <div className="min-h-screen flex-grow border-x max-w-2xl">
+        <div className="min-h-screen flex-grow border-x w-full max-w-2xl">
           <Component {...pageProps} />
         </div>
         <DiscoverSidebar />
