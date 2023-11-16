@@ -8,7 +8,7 @@ export function SideNav() {
   return (
     <nav className="sticky top-0 flex flex-col items-center px-4 md:items-start md:pr-6">
       <Link className="pb-2 pt-4" href="/">
-        <div className="flex h-10 w-10 rounded-md bg-orange-200 " />
+        <div className="flex h-10 w-10 rounded-md border-2 border-orange-400 bg-orange-200" />
       </Link>
       <ul className="flex flex-col space-y-6 pt-4">
         <li>

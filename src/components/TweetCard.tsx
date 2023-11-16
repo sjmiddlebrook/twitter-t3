@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { api } from '@/utils/api';
+import { useEffect, useState } from 'react';
 
 type Props = {
   id: string;
@@ -24,9 +25,62 @@ type LikeBtnProps = {
   tweetId: string;
 };
 
-const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: 'short',
-});
+/**
+ * https://www.builder.io/blog/relative-time
+ */
+function getRelativeTimeString(date: Date): string {
+  // Allow dates or times to be passed
+  const timeMs = date.getTime();
+
+  // Get the amount of seconds between the given date and now
+  const deltaSeconds = Math.round((timeMs - Date.now()) / 1000);
+
+  // Array reprsenting one minute, hour, day, week, month, etc in seconds
+  const cutoffs = [
+    60,
+    3600,
+    86400,
+    86400 * 7,
+    86400 * 30,
+    86400 * 365,
+    Infinity,
+  ];
+
+  // Array equivalent to the above but in the string representation of the units
+  const units: Intl.RelativeTimeFormatUnit[] = [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+  ];
+
+  // Grab the ideal cutoff unit
+  const unitIndex = cutoffs.findIndex(
+    (cutoff) => cutoff > Math.abs(deltaSeconds)
+  );
+
+  // Get the divisor to divide from the seconds. E.g. if our unit is "day" our divisor
+  // is one day in seconds, so we can divide our seconds by this to get the # of days
+  let divisor = 1;
+  let unit: Intl.RelativeTimeFormatUnit = 'second';
+  if (unitIndex !== -1) {
+    const divisorCutoff = cutoffs[unitIndex - 1];
+    if (divisorCutoff) {
+      divisor = divisorCutoff;
+    }
+    const cutoffUnit = units[unitIndex];
+    if (cutoffUnit) {
+      unit = cutoffUnit;
+    }
+  }
+
+  // Intl.RelativeTimeFormat do its magic
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  return rtf.format(Math.floor(deltaSeconds / divisor), unit);
+}
 
 function LikeButton({ isLiked, likeCount, tweetId }: LikeBtnProps) {
   const session = useSession();
@@ -104,6 +158,32 @@ function LikeButton({ isLiked, likeCount, tweetId }: LikeBtnProps) {
   );
 }
 
+function useRelativeTime({
+  date,
+  updateIntervalSeconds = 0,
+}: {
+  date: Date;
+  updateIntervalSeconds?: number;
+}) {
+  const [relativeTime, setRelativeTime] = useState<string>(() => {
+    return getRelativeTimeString(date);
+  });
+
+  useEffect(() => {
+    if (!updateIntervalSeconds) return;
+    const deltaMs = Date.now() - date.getTime();
+    const deltaHours = Math.round(deltaMs / (1000 * 60 * 60));
+    if (deltaHours > 1) return;
+    const interval = setInterval(() => {
+      const relativeTime = getRelativeTimeString(date);
+      setRelativeTime(relativeTime);
+    }, updateIntervalSeconds * 1000);
+    return () => clearInterval(interval);
+  }, [date, updateIntervalSeconds]);
+
+  return relativeTime;
+}
+
 export default function TweetCard({
   id,
   content,
@@ -112,6 +192,7 @@ export default function TweetCard({
   isLiked,
   user,
 }: Props) {
+  const relativeTime = useRelativeTime({ date: createdAt, updateIntervalSeconds: 5 });
   return (
     <div className="relative mx-auto cursor-pointer border-b border-gray-200 bg-white p-4 hover:bg-gray-100">
       <Link
@@ -135,7 +216,7 @@ export default function TweetCard({
               dateTime={createdAt.toLocaleString()}
               className="text-sm text-gray-500"
             >
-              {dateTimeFormatter.format(createdAt)}
+              {relativeTime}
             </time>
           </div>
           <p className="relative z-20 mt-1 whitespace-pre-wrap">{content}</p>

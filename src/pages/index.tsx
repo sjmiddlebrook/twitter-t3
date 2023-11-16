@@ -66,7 +66,7 @@ export default function Home() {
   return (
     <>
       <header className="top sticky z-10 border-b bg-white pt-4">
-        <h1 className="px-4 text-xl font-semibold">Home</h1>
+        <h1 className="px-4 text-xl font-semibold pb-2">Home</h1>
         {isAuthenticated && (
           <div className="flex">
             {Object.values(Tabs).map((tab) => (

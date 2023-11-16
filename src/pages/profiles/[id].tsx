@@ -54,7 +54,6 @@ function FollowButton({ isFollowing, userId }: FollowBtnProps) {
   });
 
   function handleClick() {
-    console.log('...toggle follow');
     toggleFollow.mutate({ userId });
   }
 
