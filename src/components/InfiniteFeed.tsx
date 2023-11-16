@@ -29,9 +29,9 @@ export default function InfiniteFeed({
   hasMoreData,
   fetchNewPage,
 }: Props) {
-  if (isError) return <div>Something went wrong</div>;
-  if (isLoading) return <div>Loading...</div>;
-  if (!tweets.length) return <div>No tweets</div>;
+  if (isError) return <div className="pt-4 pl-4 text-lg">Something went wrong</div>;
+  if (isLoading) return <div className="pt-4 pl-4 text-lg">Loading...</div>;
+  if (!tweets.length) return <div className="pt-4 pl-4 text-lg">No tweets</div>;
   return (
     <ul className="flex flex-col space-y-4">
       <InfiniteScroll

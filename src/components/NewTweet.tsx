@@ -3,6 +3,7 @@ import { ProfileImage } from './ProfileImage';
 import { useState } from 'react';
 import ResizableTextArea from './ResizableTextArea';
 import { api } from '@/utils/api';
+import clsx from 'clsx';
 
 export function NewTweet() {
   const [content, setContent] = useState('');
@@ -60,7 +61,15 @@ export function NewTweet() {
           placeholder="What's happening?!"
           onChange={(e) => setContent(e.target.value)}
         />
-        <button className="w-fit self-end rounded-full bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600">
+        <button
+          disabled={!content.trim() || createTweet.isLoading}
+          className={clsx(
+            'w-fit self-end rounded-full bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600',
+            {
+              ['opacity-60']: !content.trim() || createTweet.isLoading,
+            }
+          )}
+        >
           Post
         </button>
       </div>

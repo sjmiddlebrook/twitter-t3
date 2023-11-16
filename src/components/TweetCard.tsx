@@ -30,7 +30,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
 
 function LikeButton({ isLiked, likeCount, tweetId }: LikeBtnProps) {
   const session = useSession();
-  const hasUser = !!session.data?.user;
+  const userId = session.data?.user.id;
   const trpcUtils = api.useUtils();
   const toggleLike = api.tweet.toggleLike.useMutation({
     onSuccess: ({ isLiked }) => {
@@ -58,17 +58,31 @@ function LikeButton({ isLiked, likeCount, tweetId }: LikeBtnProps) {
         };
       };
       trpcUtils.tweet.infiniteFeed.setInfiniteData({}, updatedData);
+      trpcUtils.tweet.infiniteFeed.setInfiniteData(
+        {
+          onlyFollowing: true,
+        },
+        updatedData
+      );
+      if (userId) {
+        trpcUtils.tweet.infiniteProfileFeed.setInfiniteData(
+          {
+            userId,
+          },
+          updatedData
+        );
+      }
     },
   });
 
   function handleToggleLike() {
-    if (!hasUser) return;
+    if (!userId) return;
     toggleLike.mutate({ tweetId });
   }
 
   return (
     <button
-      disabled={!hasUser || toggleLike.isLoading}
+      disabled={!userId || toggleLike.isLoading}
       onClick={handleToggleLike}
       className={clsx(
         'flex cursor-pointer items-center space-x-2 rounded p-1 text-gray-500',
@@ -110,7 +124,7 @@ export default function TweetCard({
         <div className="w-full">
           <div className="flex items-center space-x-2">
             <Link
-              href={`/profile/${user.id}`}
+              href={`/profiles/${user.id}`}
               className="relative z-20 font-semibold hover:text-blue-500"
             >
               {user.name}

@@ -21,7 +21,7 @@ export function SideNav() {
           <li>
             <Link
               className="flex items-center space-x-2"
-              href={`/profile/${user.id}`}
+              href={`/profiles/${user.id}`}
             >
               <UserCircle size={24} />
               <span className="hidden md:inline">Profile</span>
@@ -35,7 +35,7 @@ export function SideNav() {
               onClick={() => void signOut()}
             >
               <LogOut size={24} />
-              <span className="hidden md:inline md:whitespace-nowrap">Sign out</span>
+              <span className="hidden md:inline whitespace-nowrap">Sign out</span>
             </button>
           </li>
         ) : (
@@ -45,7 +45,7 @@ export function SideNav() {
               onClick={() => void signIn()}
             >
               <LogIn size={24} />
-              <span className="hidden md:inline">Sign In</span>
+              <span className="hidden md:inline whitespace-nowrap">Sign In</span>
             </button>
           </li>
         )}
